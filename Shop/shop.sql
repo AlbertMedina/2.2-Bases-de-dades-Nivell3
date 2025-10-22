@@ -37,3 +37,67 @@ INSERT INTO producto VALUES(9, 'Portátil Ideapd 320', 444, 2);
 INSERT INTO producto VALUES(10, 'Impresora HP Deskjet 3720', 59.99, 3);
 INSERT INTO producto VALUES(11, 'Impresora HP Laserjet Pro M26nw', 180, 3);
 
+
+-- -----------------------------------------------------
+-- Queries
+-- -----------------------------------------------------
+
+-- 1. Products names
+SELECT nombre FROM producto;
+
+-- 2. Products names and prices
+SELECT nombre, precio FROM producto;
+
+-- 3. Products (all columns)
+SELECT * FROM producto;
+
+-- 4. Products name, prices in euros and prices in dollars
+SELECT nombre, precio, ROUND(precio * 1.16, 2) AS price_dollars FROM producto;
+
+-- 5. Products names, prices in euros and prices in dollars (using alias)
+SELECT nombre AS product_name, precio AS euros, ROUND(precio * 1.16, 2) AS dollars FROM producto;
+
+-- 6. Products names (upper case) and prices
+SELECT UPPER(nombre) AS product_name_upper_case, precio FROM producto;
+
+-- 7. Products names (lower case) and prices
+SELECT LOWER(nombre) AS product_name_lower_case, precio FROM producto;
+
+-- 8. Manufacturers names and two first letters in upper case
+SELECT nombre, UPPER(SUBSTRING(nombre, 1, 2)) AS first_letters FROM fabricante;
+
+-- 9. Products names and rounded prices
+SELECT nombre, ROUND(precio) AS price_rounded FROM producto;
+
+-- 10. Products names and truncated prices
+SELECT nombre, FLOOR(precio) AS price_truncated FROM producto;
+
+-- 11. Codes of manufacterers with any product
+SELECT f.codigo FROM fabricante f JOIN producto p ON f.codigo = p.codigo_fabricante;
+
+-- 12. Codes of manufacterers with any product (non-repeated)
+SELECT DISTINCT f.codigo FROM fabricante f JOIN producto p ON f.codigo = p.codigo_fabricante;
+
+-- 13. Manufacturers names sorted in ascending order
+SELECT nombre FROM fabricante ORDER BY nombre;
+
+-- 14. Manufacturers names sorted in descending order
+SELECT nombre FROM fabricante ORDER BY nombre DESC;
+
+-- 15. Products names orderes in ascending order and then by price in descending order
+SELECT nombre FROM producto ORDER BY nombre ASC, precio DESC;
+
+-- 16. 5 first rows from manufacterers table
+SELECT * FROM fabricante LIMIT 5;
+
+-- 17. 2 rows from 4th row from manufacterers table
+SELECT * FROM fabricante LIMIT 2 OFFSET 3;
+
+-- 18. Cheapest product name and price
+SELECT nombre, precio FROM producto ORDER BY precio LIMIT 1;
+
+-- 19. Most expensive product name and price
+SELECT nombre, precio FROM producto ORDER BY precio DESC LIMIT 1;
+
+-- 20. Products from manufacterer number 2 names
+SELECT nombre FROM producto WHERE codigo_fabricante = 2;
