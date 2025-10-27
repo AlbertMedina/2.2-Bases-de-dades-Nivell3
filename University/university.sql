@@ -290,3 +290,24 @@ SELECT DISTINCT d.nombre AS departamento FROM departamento d JOIN profesor p ON 
 -- 9. Name and surnames of students studing any subject in 2018/2019
 SELECT DISTINCT p.nombre, p.apellido1, p.apellido2 FROM persona p JOIN alumno_se_matricula_asignatura a ON p.id = a.id_alumno JOIN curso_escolar c ON a.id_curso_escolar = c.id WHERE c.anyo_inicio = 2018 AND c.anyo_fin = 2019;
 
+-- -----------------------------------------------------
+-- Left/Right Join queries
+-- -----------------------------------------------------
+
+-- 1. Professors and departments (if any) ordered alphabetically
+SELECT d.nombre AS departamento, per.apellido1, per.apellido2, per.nombre FROM persona per JOIN profesor pro ON per.id = pro.id_profesor LEFT JOIN departamento d ON pro.id_departamento = d.id ORDER BY d.nombre, per.apellido1, per.apellido2, per.nombre;
+
+-- 2. Professors with no department
+SELECT per.apellido1, per.apellido2, per.nombre FROM persona per JOIN profesor pro ON per.id = pro.id_profesor LEFT JOIN departamento d ON pro.id_departamento = d.id WHERE d.id IS NULL ORDER BY per.apellido1, per.apellido2, per.nombre;
+
+-- 3. Departments with no professors
+SELECT d.nombre AS departamento FROM departamento d LEFT JOIN profesor p ON d.id = p.id_departamento WHERE p.id_profesor IS NULL ORDER BY d.nombre;
+
+-- 4. Professors with no subject
+SELECT per.apellido1, per.apellido2, per.nombre FROM persona per JOIN profesor pro ON per.id = pro.id_profesor LEFT JOIN asignatura s ON pro.id_profesor = s.id_profesor WHERE s.id IS NULL ORDER BY per.apellido1, per.apellido2, per.nombre;
+
+-- 5. Subjects with no professor
+SELECT s.nombre AS asignatura FROM asignatura s LEFT JOIN profesor p ON s.id_profesor = p.id_profesor WHERE p.id_profesor IS NULL ORDER BY s.nombre;
+
+-- 6. Departments with no subjects in any course
+SELECT DISTINCT d.nombre AS departamento FROM departamento d LEFT JOIN profesor p ON d.id = p.id_departamento LEFT JOIN asignatura s ON p.id_profesor = s.id_profesor LEFT JOIN alumno_se_matricula_asignatura a ON s.id = a.id_asignatura LEFT JOIN curso_escolar c ON a.id_curso_escolar = c.id WHERE c.id IS NULL ORDER BY d.nombre;
