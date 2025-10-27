@@ -311,3 +311,36 @@ SELECT s.nombre AS asignatura FROM asignatura s LEFT JOIN profesor p ON s.id_pro
 
 -- 6. Departments with no subjects in any course
 SELECT DISTINCT d.nombre AS departamento FROM departamento d LEFT JOIN profesor p ON d.id = p.id_departamento LEFT JOIN asignatura s ON p.id_profesor = s.id_profesor LEFT JOIN alumno_se_matricula_asignatura a ON s.id = a.id_asignatura LEFT JOIN curso_escolar c ON a.id_curso_escolar = c.id WHERE c.id IS NULL ORDER BY d.nombre;
+
+-- -----------------------------------------------------
+-- Summary queries
+-- -----------------------------------------------------
+
+-- 1. Number of students
+SELECT COUNT(*) AS numero_estudiantes FROM persona WHERE tipo = "alumno";
+
+-- 2. Number of students born in 1999
+SELECT COUNT(*) AS numero_estudiantes_1999 FROM persona WHERE tipo = "alumno" AND YEAR(fecha_nacimiento) = 1999;
+
+-- 3. Number os professors per department sorted by number
+SELECT d.nombre AS departamento, COUNT(p.id_profesor) AS numero_profesores FROM profesor p JOIN departamento d ON p.id_departamento = d.id GROUP BY d.id ORDER BY COUNT(p.id_profesor) DESC;
+
+-- 4. Number of professors per department (including empty departments) sorted by number
+SELECT d.nombre AS departamento, COUNT(p.id_profesor) AS numero_profesores FROM profesor p RIGHT JOIN departamento d ON p.id_departamento = d.id GROUP BY d.id ORDER BY COUNT(p.id_profesor) DESC;
+
+-- 5. Number of subjects per degree (including empty degrees) sorted by number
+SELECT g.nombre AS grado, COUNT(s.id) AS numero_asignaturas FROM grado g LEFT JOIN asignatura s ON g.id = s.id_grado GROUP BY g.id ORDER BY COUNT(s.id) DESC;
+
+-- 6. Number of subjects per degree for those degrees with more than 40 subjects
+SELECT g.nombre AS grado, COUNT(s.id) AS numero_asignaturas FROM grado g LEFT JOIN asignatura s ON g.id = s.id_grado GROUP BY g.id HAVING COUNT(s.id) > 40 ORDER BY COUNT(s.id) DESC;
+
+-- 7. Number of credits per subject type for each degree
+SELECT g.nombre AS grado, s.tipo AS tipo_asignatura, COUNT(s.id) AS numero_asignaturas FROM grado g JOIN asignatura s ON g.id = s.id_grado GROUP BY g.id, s.tipo ORDER BY g.nombre, s.tipo DESC;
+
+-- 8. 
+
+-- 9. 
+
+-- 10. 
+
+-- 11. 
