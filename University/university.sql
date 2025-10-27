@@ -276,16 +276,17 @@ SELECT nombre, apellido1, apellido2 FROM persona WHERE tipo = "alumno" AND YEAR(
 SELECT nombre, apellido1, apellido2 FROM persona WHERE tipo = "profesor" AND telefono IS NULL AND nif LIKE "%K";
 
 -- 5. Name of subjects taking place in first quarter, third course, grade with id 7
-SELECT nombre FROM asignatura WHERE cuatrimestre = 1 AND curso = 3 AND id_grado = 7;
+SELECT nombre AS asignatura FROM asignatura WHERE cuatrimestre = 1 AND curso = 3 AND id_grado = 7;
 
 -- 6. Professors first surname, second surname, name ad department sorted alphabetically
-SELECT per.apellido1, per.apellido2, per.nombre, d.nombre FROM persona per JOIN profesor pro ON per.id = pro.id_profesor JOIN departamento d ON pro.id_departamento = d.id ORDER BY per.apellido1, per.apellido2, per.nombre;
+SELECT per.apellido1, per.apellido2, per.nombre, d.nombre AS departamento FROM persona per JOIN profesor pro ON per.id = pro.id_profesor JOIN departamento d ON pro.id_departamento = d.id ORDER BY per.apellido1, per.apellido2, per.nombre;
 
 -- 7. Subjects names, start year and finish year of student with NIF '26902806M'
-SELECT s.nombre, c.anyo_inicio, c.anyo_fin FROM curso_escolar c JOIN alumno_se_matricula_asignatura a ON c.id = a.id_curso_escolar JOIN asignatura s ON a.id_asignatura = s.id JOIN persona p ON a.id_alumno = p.id WHERE p.nif = "26902806M";
+SELECT s.nombre AS asignatura, c.anyo_inicio, c.anyo_fin FROM curso_escolar c JOIN alumno_se_matricula_asignatura a ON c.id = a.id_curso_escolar JOIN asignatura s ON a.id_asignatura = s.id JOIN persona p ON a.id_alumno = p.id WHERE p.nif = "26902806M";
 
 -- 8. Department names which any of its professors teach any subject in 'Grado en Ingeniería Informática (Plan 2015)'
-SELECT DISTINCT d.nombre FROM departamento d JOIN profesor p ON d.id = p.id_departamento JOIN asignatura s ON s.id_profesor = p.id_profesor JOIN grado g ON s.id_grado = g.id WHERE g.nombre = "Grado en Ingeniería Informática (Plan 2015)";
+SELECT DISTINCT d.nombre AS departamento FROM departamento d JOIN profesor p ON d.id = p.id_departamento JOIN asignatura s ON s.id_profesor = p.id_profesor JOIN grado g ON s.id_grado = g.id WHERE g.nombre = "Grado en Ingeniería Informática (Plan 2015)";
 
 -- 9. Name and surnames of students studing any subject in 2018/2019
 SELECT DISTINCT p.nombre, p.apellido1, p.apellido2 FROM persona p JOIN alumno_se_matricula_asignatura a ON p.id = a.id_alumno JOIN curso_escolar c ON a.id_curso_escolar = c.id WHERE c.anyo_inicio = 2018 AND c.anyo_fin = 2019;
+
