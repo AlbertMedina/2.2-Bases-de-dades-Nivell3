@@ -51,10 +51,10 @@ SELECT nombre, precio FROM producto;
 -- 3. Products (all columns)
 SELECT * FROM producto;
 
--- 4. Products name, prices in euros and prices in dollars
+-- 4. Products name, prices in euros and prices in dollars (1€ = 1.16USD)
 SELECT nombre, precio, ROUND(precio * 1.16, 2) AS precio_dolares FROM producto;
 
--- 5. Products names, prices in euros and prices in dollars (using alias)
+-- 5. Products names, prices in euros and prices in dollars (1€ = 1.16USD) (using alias)
 SELECT nombre AS nombre_producto, precio AS euros, ROUND(precio * 1.16, 2) AS dolares FROM producto;
 
 -- 6. Products names (upper case) and prices
@@ -72,10 +72,10 @@ SELECT nombre, ROUND(precio) AS precio_redondeado FROM producto;
 -- 10. Products names and truncated prices
 SELECT nombre, FLOOR(precio) AS precio_truncado FROM producto;
 
--- 11. Codes of manufacterers with any product
+-- 11. Codes of manufacturers with any product
 SELECT codigo_fabricante FROM producto;
 
--- 12. Codes of manufacterers with any product (non-repeated)
+-- 12. Codes of manufacturers with any product (non-repeated)
 SELECT DISTINCT codigo_fabricante FROM producto;
 
 -- 13. Manufacturers names sorted in ascending order
@@ -84,13 +84,13 @@ SELECT nombre FROM fabricante ORDER BY nombre;
 -- 14. Manufacturers names sorted in descending order
 SELECT nombre FROM fabricante ORDER BY nombre DESC;
 
--- 15. Products names orderes in ascending order and then by price in descending order
+-- 15. Products names sorted in ascending order and then by price in descending order
 SELECT nombre FROM producto ORDER BY nombre ASC, precio DESC;
 
--- 16. 5 first rows from manufacterers table
+-- 16. 5 first rows from manufacturers table
 SELECT * FROM fabricante LIMIT 5;
 
--- 17. 2 rows from 4th row from manufacterers table
+-- 17. 2 rows from 4th row from manufacturers table
 SELECT * FROM fabricante LIMIT 2 OFFSET 3;
 
 -- 18. Cheapest product name and price
@@ -99,22 +99,22 @@ SELECT nombre, precio FROM producto ORDER BY precio LIMIT 1;
 -- 19. Most expensive product name and price
 SELECT nombre, precio FROM producto ORDER BY precio DESC LIMIT 1;
 
--- 20. Products from manufacterer number 2 names
+-- 20. Products from manufacturer number 2 names
 SELECT nombre FROM producto WHERE codigo_fabricante = 2;
 
--- 21. Products names, prices and manufacterers names
+-- 21. Products names, prices and manufacturers names
 SELECT p.nombre, p.precio, f.nombre AS fabricante FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo;
 
--- 22. Products names, prices and manufacterers names (sorted alphabetically by manufacturer name)
+-- 22. Products names, prices and manufacturers names (sorted alphabetically by manufacturer name)
 SELECT p.nombre, p.precio, f.nombre AS fabricante FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo ORDER BY f.nombre;
 
--- 23. Products codes, names, manufacterers codes and manufacturers names
+-- 23. Products codes, names, manufacturers codes and manufacturers names
 SELECT p.codigo, p.nombre, f.codigo AS codigo_fabricante, f.nombre AS nombre_fabricante FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo ORDER BY p.codigo;
 
--- 24. Cheapest product name, price ad manufacterer name
+-- 24. Cheapest product name, price and manufacturer name
 SELECT p.nombre, p.precio, f.nombre AS fabricante FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo ORDER BY p.precio LIMIT 1;
 
--- 25. Most expensive product name, price ad manufacterer name
+-- 25. Most expensive product name, price ad manufacturer name
 SELECT p.nombre, p.precio, f.nombre AS fabricante FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo ORDER BY p.precio DESC LIMIT 1;
 
 -- 26. Lenovo products names
@@ -129,10 +129,10 @@ SELECT p.nombre, f.nombre AS fabricante FROM producto p JOIN fabricante f ON p.c
 -- 29. Asus, Hewlett-Packard and Seagate products names (using IN)
 SELECT p.nombre, f.nombre AS fabricante FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo WHERE f.nombre IN ("Asus", "Hewlett-Packard", "Seagate");
 
--- 30. Name and price for products whose manufacterer name ends with letter 'e'
+-- 30. Name and price for products whose manufacturer name ends with letter 'e'
 SELECT p.nombre, p.precio FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo WHERE f.nombre LIKE "%e";
 
--- 31. Name and price for products whose manufacterer name contains letter 'w'
+-- 31. Name and price for products whose manufacturer name contains letter 'w'
 SELECT p.nombre, p.precio FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo WHERE f.nombre LIKE "%w%";
 
 -- 32. Name, price and manufacturer name for those products that cost 180€ or more sorted by price in descending order and then by name in ascending order
@@ -141,16 +141,16 @@ SELECT p.nombre, p.precio, f.nombre AS fabricante FROM producto p JOIN fabricant
 -- 33. Name and code for these manufacturers with any product
 SELECT DISTINCT f.codigo, f.nombre FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo ORDER BY f.codigo;
 
--- 34. Manufacterers with their products
+-- 34. Manufacturers with their products
 SELECT f.nombre AS fabricante, p.nombre AS producto FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante;
 
--- 35. Manufacterers with no products
-SELECT f.nombre AS fabricante, p.nombre AS producto FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante WHERE p.codigo_fabricante IS NULL;
+-- 35. Manufacturers with no products
+SELECT f.nombre FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante WHERE p.codigo IS NULL;
 
 -- 36. Lenovo products names (without INNER JOIN)
 SELECT nombre FROM producto WHERE codigo_fabricante = (SELECT codigo FROM fabricante WHERE nombre = "Lenovo");
 
--- 37. All data of products that have the same price than Lenovo most expensive product (without INNER JOIN)
+-- 37. All data of products that have the same price as Lenovo most expensive product (without INNER JOIN)
 SELECT * FROM producto WHERE precio = (SELECT MAX(precio) FROM producto WHERE codigo_fabricante = (SELECT codigo FROM fabricante WHERE nombre = "Lenovo"));
 
 -- 38. Lenovo most expensive product name
@@ -159,7 +159,7 @@ SELECT p.nombre FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.cod
 -- 39. Hewlett-Packard cheapest product name
 SELECT p.nombre FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo WHERE f.nombre = "Hewlett-Packard" ORDER BY p.precio LIMIT 1;
 
--- 40. Name of products that are more expensive than Lenovo most expensive product
+-- 40. Name of products that are more expensive or equal than Lenovo most expensive product
 SELECT p.nombre FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo WHERE p.precio >= (SELECT MAX(p.precio) FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo WHERE f.nombre = 'Lenovo');
 
 -- 41. Name of Asus products with a price above Asus average price
