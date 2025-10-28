@@ -295,11 +295,10 @@ SELECT DISTINCT p.nombre, p.apellido1, p.apellido2 FROM persona p JOIN alumno_se
 -- -----------------------------------------------------
 
 -- 1. Professors and departments (if any) ordered alphabetically
-SELECT d.nombre AS departamento, per.apellido1, per.apellido2, per.nombre FROM persona per JOIN profesor pro ON per.id = pro.id_profesor LEFT JOIN departamento d ON pro.id_departamento = d.id ORDER BY d.nombre, per.apellido1, per.apellido2, per.nombre;
 SELECT d.nombre AS departamento, per.apellido1, per.apellido2, per.nombre FROM profesor pro LEFT JOIN departamento d ON pro.id_departamento = d.id JOIN persona per ON pro.id_profesor = per.id ORDER BY d.nombre, per.apellido1, per.apellido2, per.nombre;
 
 -- 2. Professors with no department
-SELECT per.apellido1, per.apellido2, per.nombre FROM persona per JOIN profesor pro ON per.id = pro.id_profesor LEFT JOIN departamento d ON pro.id_departamento = d.id WHERE d.id IS NULL ORDER BY per.apellido1, per.apellido2, per.nombre;
+SELECT per.apellido1, per.apellido2, per.nombre FROM profesor pro LEFT JOIN departamento d ON pro.id_departamento = d.id JOIN persona per ON pro.id_profesor = per.id WHERE d.id IS NULL ORDER BY per.apellido1, per.apellido2, per.nombre;
 
 -- 3. Departments with no professors
 SELECT d.nombre AS departamento FROM departamento d LEFT JOIN profesor p ON d.id = p.id_departamento WHERE p.id_profesor IS NULL ORDER BY d.nombre;
@@ -312,7 +311,6 @@ SELECT s.nombre AS asignatura FROM asignatura s LEFT JOIN profesor p ON s.id_pro
 
 -- 6. Departments with no subjects in any course
 SELECT DISTINCT d.nombre AS departamento FROM departamento d LEFT JOIN profesor p ON d.id = p.id_departamento LEFT JOIN asignatura sub ON p.id_profesor = sub.id_profesor LEFT JOIN alumno_se_matricula_asignatura stu ON sub.id = stu.id_asignatura LEFT JOIN curso_escolar c ON stu.id_curso_escolar = c.id WHERE c.id IS NULL ORDER BY d.nombre;
-SELECT DISTINCT d.nombre AS departamento FROM departamento d LEFT JOIN profesor p ON d.id = p.id_departamento LEFT JOIN asignatura sub ON p.id_profesor = sub.id_profesor WHERE sub.id IS NULL ORDER BY d.nombre;
 
 -- -----------------------------------------------------
 -- Summary queries
