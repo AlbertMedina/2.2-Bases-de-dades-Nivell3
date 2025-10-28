@@ -335,12 +335,16 @@ SELECT g.nombre AS grado, COUNT(s.id) AS numero_asignaturas FROM grado g LEFT JO
 SELECT g.nombre AS grado, COUNT(s.id) AS numero_asignaturas FROM grado g LEFT JOIN asignatura s ON g.id = s.id_grado GROUP BY g.id HAVING COUNT(s.id) > 40 ORDER BY COUNT(s.id) DESC;
 
 -- 7. Number of credits per subject type for each degree
-SELECT g.nombre AS grado, s.tipo AS tipo_asignatura, COUNT(s.id) AS numero_asignaturas FROM grado g JOIN asignatura s ON g.id = s.id_grado GROUP BY g.id, s.tipo ORDER BY g.nombre, s.tipo DESC;
+SELECT g.nombre AS grado, s.tipo AS tipo_asignatura, SUM(s.creditos) AS numero_asignaturas FROM grado g JOIN asignatura s ON g.id = s.id_grado GROUP BY g.id, s.tipo ORDER BY g.nombre, s.tipo DESC;
 
--- 8. 
+-- 8. Number of students per course
+SELECT c.anyo_inicio AS año_inicio, COUNT(a.id_alumno) AS numero_estudiantes FROM curso_escolar c LEFT JOIN alumno_se_matricula_asignatura a ON c.id = a.id_curso_escolar GROUP BY c.anyo_inicio ORDER BY c.anyo_inicio;
 
--- 9. 
+-- 9. Professors ans their subjects
+SELECT per.id, per.nombre, per.apellido1, per.apellido2, COUNT(s.id) AS numero_asignaturas FROM profesor pro LEFT JOIN asignatura s ON pro.id_profesor = s.id_profesor JOIN persona per ON pro.id_profesor = per.id GROUP BY per.id ORDER BY per.id;
 
--- 10. 
+-- 10. Youngest student data
+SELECT * FROM persona WHERE tipo = "alumno" ORDER BY fecha_nacimiento DESC LIMIT 1;
 
--- 11. 
+-- 11. Professors with a department assigned but no subjects
+SELECT per.id, per.nombre, per.apellido1, per.apellido2 FROM departamento d JOIN profesor pro ON d.id = pro.id_departamento LEFT JOIN asignatura s ON pro.id_profesor = s.id_profesor JOIN persona per ON pro.id_profesor = per.id WHERE s.id IS NULL ORDER BY per.id;
