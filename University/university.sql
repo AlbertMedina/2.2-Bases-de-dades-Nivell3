@@ -278,7 +278,7 @@ SELECT nombre, apellido1, apellido2 FROM persona WHERE tipo = "profesor" AND tel
 -- 5. Name of subjects taking place in first quarter, third course, grade with id 7
 SELECT nombre AS asignatura FROM asignatura WHERE cuatrimestre = 1 AND curso = 3 AND id_grado = 7;
 
--- 6. Professors first surname, second surname, name ad department sorted alphabetically
+-- 6. Professors first surname, second surname, name and department sorted alphabetically
 SELECT per.apellido1, per.apellido2, per.nombre, d.nombre AS departamento FROM persona per JOIN profesor pro ON per.id = pro.id_profesor JOIN departamento d ON pro.id_departamento = d.id ORDER BY per.apellido1, per.apellido2, per.nombre;
 
 -- 7. Subjects names, start year and finish year of student with NIF '26902806M'
@@ -296,6 +296,7 @@ SELECT DISTINCT p.nombre, p.apellido1, p.apellido2 FROM persona p JOIN alumno_se
 
 -- 1. Professors and departments (if any) ordered alphabetically
 SELECT d.nombre AS departamento, per.apellido1, per.apellido2, per.nombre FROM persona per JOIN profesor pro ON per.id = pro.id_profesor LEFT JOIN departamento d ON pro.id_departamento = d.id ORDER BY d.nombre, per.apellido1, per.apellido2, per.nombre;
+SELECT d.nombre AS departamento, per.apellido1, per.apellido2, per.nombre FROM profesor pro LEFT JOIN departamento d ON pro.id_departamento = d.id JOIN persona per ON pro.id_profesor = per.id ORDER BY d.nombre, per.apellido1, per.apellido2, per.nombre;
 
 -- 2. Professors with no department
 SELECT per.apellido1, per.apellido2, per.nombre FROM persona per JOIN profesor pro ON per.id = pro.id_profesor LEFT JOIN departamento d ON pro.id_departamento = d.id WHERE d.id IS NULL ORDER BY per.apellido1, per.apellido2, per.nombre;
@@ -311,6 +312,7 @@ SELECT s.nombre AS asignatura FROM asignatura s LEFT JOIN profesor p ON s.id_pro
 
 -- 6. Departments with no subjects in any course
 SELECT DISTINCT d.nombre AS departamento FROM departamento d LEFT JOIN profesor p ON d.id = p.id_departamento LEFT JOIN asignatura sub ON p.id_profesor = sub.id_profesor LEFT JOIN alumno_se_matricula_asignatura stu ON sub.id = stu.id_asignatura LEFT JOIN curso_escolar c ON stu.id_curso_escolar = c.id WHERE c.id IS NULL ORDER BY d.nombre;
+SELECT DISTINCT d.nombre AS departamento FROM departamento d LEFT JOIN profesor p ON d.id = p.id_departamento LEFT JOIN asignatura sub ON p.id_profesor = sub.id_profesor WHERE sub.id IS NULL ORDER BY d.nombre;
 
 -- -----------------------------------------------------
 -- Summary queries
@@ -322,7 +324,7 @@ SELECT COUNT(*) AS numero_estudiantes FROM persona WHERE tipo = "alumno";
 -- 2. Number of students born in 1999
 SELECT COUNT(*) AS numero_estudiantes_1999 FROM persona WHERE tipo = "alumno" AND YEAR(fecha_nacimiento) = 1999;
 
--- 3. Number os professors per department sorted by number
+-- 3. Number of professors per department sorted by number
 SELECT d.nombre AS departamento, COUNT(p.id_profesor) AS numero_profesores FROM profesor p JOIN departamento d ON p.id_departamento = d.id GROUP BY d.id ORDER BY COUNT(p.id_profesor) DESC;
 
 -- 4. Number of professors per department (including empty departments) sorted by number
@@ -335,13 +337,13 @@ SELECT g.nombre AS grado, COUNT(s.id) AS numero_asignaturas FROM grado g LEFT JO
 SELECT g.nombre AS grado, COUNT(s.id) AS numero_asignaturas FROM grado g LEFT JOIN asignatura s ON g.id = s.id_grado GROUP BY g.id HAVING COUNT(s.id) > 40 ORDER BY COUNT(s.id) DESC;
 
 -- 7. Number of credits per subject type for each degree
-SELECT g.nombre AS grado, s.tipo AS tipo_asignatura, SUM(s.creditos) AS numero_asignaturas FROM grado g JOIN asignatura s ON g.id = s.id_grado GROUP BY g.id, s.tipo ORDER BY g.nombre, s.tipo DESC;
+SELECT g.nombre AS grado, s.tipo AS tipo_asignatura, SUM(s.creditos) AS total_creditos FROM grado g JOIN asignatura s ON g.id = s.id_grado GROUP BY g.id, s.tipo ORDER BY g.nombre, s.tipo DESC;
 
 -- 8. Number of students per course
 SELECT c.anyo_inicio AS año_inicio, COUNT(s.id_alumno) AS numero_estudiantes FROM curso_escolar c LEFT JOIN alumno_se_matricula_asignatura s ON c.id = s.id_curso_escolar GROUP BY c.anyo_inicio ORDER BY c.anyo_inicio;
 
 -- 9. Professors ans their subjects
-SELECT per.id, per.nombre, per.apellido1, per.apellido2, COUNT(s.id) AS numero_asignaturas FROM profesor pro LEFT JOIN asignatura s ON pro.id_profesor = s.id_profesor JOIN persona per ON pro.id_profesor = per.id GROUP BY per.id ORDER BY per.id;
+SELECT per.id, per.nombre, per.apellido1, per.apellido2, COUNT(s.id) AS numero_asignaturas FROM profesor pro LEFT JOIN asignatura s ON pro.id_profesor = s.id_profesor JOIN persona per ON pro.id_profesor = per.id GROUP BY per.id ORDER BY COUNT(s.id) DESC, per.id;
 
 -- 10. Youngest student data
 SELECT * FROM persona WHERE tipo = "alumno" ORDER BY fecha_nacimiento DESC LIMIT 1;
